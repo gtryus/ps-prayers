@@ -5,7 +5,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import type { SelectChangeEvent } from "@mui/material/Select";
-import { sessionData } from "../assets/sessionData.ts";
+import { sessionData } from "../data/sessionData.ts";
 
 interface IProps {
     value?: string;
@@ -40,7 +40,7 @@ export default function SelectSession(props: IProps) {
           onChange={handleChange}
         >
           {sessionData.map(session => (
-            <MenuItem key={`session-${session.value}`} value={session.value}>
+            <MenuItem key={`s-${session.value}`} value={session.value}>
               {`Session ${session.value}: ${session.label} (${session.verses})`}
             </MenuItem>
           ))}

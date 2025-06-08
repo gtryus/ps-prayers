@@ -1,4 +1,4 @@
-import TextField from "@mui/material/TextField";
+import { FormControl,  OutlinedInput,  Typography } from "@mui/material";
 import React from "react";
 
 interface IProps {
@@ -17,22 +17,25 @@ export default function Question(props: IProps) {
     }
   };
 
-    React.useEffect(() => {
-        if (props.value) {
-        setQuestion(props.value);
-        }
-    }, [props.value]);
+  React.useEffect(() => {
+    if (props.value) {
+      setQuestion(props.value);
+    }
+  }, [props.value]);
 
   return (
-    <TextField
-      id="outlined-basic"
-      label={props.label || "Question"}
-      fullWidth
-      variant="outlined"
-      multiline
-      rows={4}
-      onChange={handleChange}
-      value={question}
-    />
+    <FormControl fullWidth>
+      <Typography variant="h6" component="h2" gutterBottom align="left"> 
+        {props.label || "Question"}
+      </Typography>
+      <OutlinedInput
+        id="question-input"
+        fullWidth
+        multiline
+        rows={4}
+        onChange={handleChange}
+        value={question}
+      />
+    </FormControl>
   );
 }

@@ -8,12 +8,15 @@ import {
   ThemeProvider,
   createTheme,
   useMediaQuery,
+  Typography,
 } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
 import SelectSession from "./Components/SelectSession";
-import { sessionData } from "./assets/sessionData.ts";
-import { questions } from "./assets/questions.ts";
+import { sessionData } from "./data/sessionData.ts";
+import { questions } from "./data/questions.ts";
 import Question from "./Components/Question.tsx";
+
+const unit = "su25"
 
 const lookupUrl = `https://www.biblegateway.com/passage/?search=`;
 const versionUrl = `&version=NLT`;
@@ -46,18 +49,31 @@ function App() {
   }, [chapter, verse]);
 
   const handleQuestionChange = (ses: string, num: string, value: string) => {
-    localStorage.setItem(`question-${ses}-${num}`, value); // Save question to local storage
+    localStorage.setItem(`${unit}-${ses}-${num}`, value); // Save question to local storage
   };
 
   useEffect(() => {
     // Load responses from local storage when the component mounts
     const loadedResponses: string[] = [];
     for (let i = 0; i < questions.length; i++) {
-      const response = localStorage.getItem(`question-${sesNum}-${i}`);
+      const response = localStorage.getItem(`${unit}-${sesNum}-${i}`);
       loadedResponses.push(response || "");
     }
     setResponses(loadedResponses);
   }, [sesNum]);
+
+  useEffect(() => {
+    const today = new Date();
+    // Find the closest session to today
+    const closestSession = sessionData.reduce((prev, curr) => {
+      const prevDate = new Date(prev.date);
+      const currDate = new Date(curr.date);
+      const prevDiff = Math.abs(prevDate.getTime() - today.getTime());
+      const currDiff = Math.abs(currDate.getTime() - today.getTime());
+      return currDiff < prevDiff ? curr : prev;
+    });
+    setSesNum(closestSession.value.toString());
+  }, []);
 
   return (
     <>
@@ -72,10 +88,13 @@ function App() {
           <img src={prayingLogo} className="logo" alt="React logo" />
         </a>
       </div>
-      <h1>Praying Scripture in Psalms</h1>
+      
       <div className="card">
         <ThemeProvider theme={theme}>
           <Stack spacing={2} direction="column" alignItems="center">
+          <Typography variant="h4" component="h1" gutterBottom>
+            Praying Scripture from Psalms
+          </Typography>
             <Stack direction="row" spacing={2} alignItems="center">
               <SelectSession value={sesNum} onChange={setSesNum} />
               <Link href={url} target="_blank">
@@ -84,7 +103,7 @@ function App() {
             </Stack>
             {questions.map((question, index) => (
               <Question
-                key={`question-${index}`}
+                key={`q-${index}`}
                 label={question}
                 value={responses[index] || ""}
                 onChange={value =>
