@@ -2,7 +2,13 @@ import { useMemo, useState, useEffect } from "react";
 import prayingLogo from "./assets/praying.png";
 import etbLogo from "/etb-sum-25-wb.png";
 import "./App.css";
-import { Stack, Link } from "@mui/material";
+import {
+  Stack,
+  Link,
+  ThemeProvider,
+  createTheme,
+  useMediaQuery,
+} from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
 import SelectSession from "./Components/SelectSession";
 import { sessionData } from "./assets/sessionData.ts";
@@ -15,6 +21,15 @@ const versionUrl = `&version=NLT`;
 function App() {
   const [sesNum, setSesNum] = useState("2");
   const [responses, setResponses] = useState<string[]>([]);
+  const isDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+
+  const theme = useMemo(() => {
+    return createTheme({
+      palette: {
+        mode: isDarkMode? "dark" : "light",
+      },
+    });
+  }, [isDarkMode]);
 
   const chapter = useMemo(() => {
     const session = sessionData.find(s => s.value === parseInt(sesNum));
@@ -59,24 +74,26 @@ function App() {
       </div>
       <h1>Praying Scripture in Psalms</h1>
       <div className="card">
-        <Stack spacing={2} direction="column" alignItems="center">
-          <Stack direction="row" spacing={2} alignItems="center">
-            <SelectSession value={sesNum} onChange={setSesNum} />
-            <Link href={url} target="_blank">
-              <LinkIcon />
-            </Link>
+        <ThemeProvider theme={theme}>
+          <Stack spacing={2} direction="column" alignItems="center">
+            <Stack direction="row" spacing={2} alignItems="center">
+              <SelectSession value={sesNum} onChange={setSesNum} />
+              <Link href={url} target="_blank">
+                <LinkIcon />
+              </Link>
+            </Stack>
+            {questions.map((question, index) => (
+              <Question
+                key={`question-${index}`}
+                label={question}
+                value={responses[index] || ""}
+                onChange={value =>
+                  handleQuestionChange(sesNum, index.toString(), value)
+                }
+              />
+            ))}
           </Stack>
-          {questions.map((question, index) => (
-            <Question
-              key={`question-${index}`}
-              label={question}
-              value={responses[index] || ""}
-              onChange={value =>
-                handleQuestionChange(sesNum, index.toString(), value)
-              }
-            />
-          ))}
-        </Stack>
+        </ThemeProvider>
       </div>
       <p className="read-the-docs">Click on the logos to learn more</p>
     </>
