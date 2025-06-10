@@ -1,4 +1,4 @@
-import { FormControl,  OutlinedInput,  Typography } from "@mui/material";
+import { FormControl, OutlinedInput, Typography } from "@mui/material";
 import React from "react";
 
 interface IProps {
@@ -18,14 +18,12 @@ export default function Question(props: IProps) {
   };
 
   React.useEffect(() => {
-    if (props.value) {
-      setQuestion(props.value);
-    }
+    setQuestion(props.value || "");
   }, [props.value]);
 
   return (
     <FormControl fullWidth>
-      <Typography variant="h6" component="h2" gutterBottom align="left"> 
+      <Typography variant="h6" component="h2" gutterBottom align="left">
         {props.label || "Question"}
       </Typography>
       <OutlinedInput
